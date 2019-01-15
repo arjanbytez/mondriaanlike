@@ -3,13 +3,17 @@
 
 <head>
   <meta charset="utf-8">
-  <script src="../d3.min.js"></script>
+  <script src="https://unpkg.com/d3@5.7.0/dist/d3.min.js"></script>
 
 </head>
 <title>Don't press d</title>
 
 <body>
-Mondriaanlike painting on demand.
+<h2>Mondriaanlike painting on demand</h2>
+This is a little project I'm working on to teach myself working with <a href="https://github.com/d3/">D3</a> and generated images.<br>
+Every time you refresh the screen a brand new painting is generated. You can do with it whatever you like, as long as you credit this page or keep the signature in the image.<br>
+Oh, and don't forget to read the page title ;-/
+<p>&nbsp;</p>
 
   <div id="svgcontainer"></div>
   <script language="javascript">
@@ -46,12 +50,12 @@ Mondriaanlike painting on demand.
     // x, y values must not touch edges
     function harmonizePainting(side) {
       if (side = "x") {
-        if (x1 < 40) {x1 = 50; x2=50;}
-        if (x2 > 860) {x1 = 850; x2 = 850;}
+        if (x1 < 40) {x1 = 60; x2=60;}
+        if (x2 > 860) {x1 = 840; x2 = 840;}
       }
       if (side = "y") {
-        if (y1 < 40) {y1 = 50; y2 = 50;}
-        if (y2 > 560) {y1 = 550; y2 = 550;}
+        if (y1 < 40) {y1 = 60; y2 = 60;}
+        if (y2 > 540) {y1 = 510; y2 = 510;}
       }
     }
     function grabXY() {
@@ -69,15 +73,47 @@ Mondriaanlike painting on demand.
         harmonizePainting("x");
       }
     }
+    function addBorder() { // the most complex way to add a simple border ;-)
+      svg.append("rect")
+        .attr("x", 10).attr("y", 10).attr("width", 880).attr("height", 580)
+        .attr("style", "stroke: #664d03; fill:none; stroke-width: 5px; stroke-dasharray: 1 5;");
+      svg.append("rect")
+        .attr("x", 5).attr("y", 5).attr("width", 890).attr("height", 590)
+        .attr("style", "stroke: #664d03; fill:none; stroke-width: 15px;");
+      svg.append("rect")
+        .attr("x", 15).attr("y", 15).attr("width", 870).attr("height", 570)
+        .attr("style", "stroke: #664d03; fill:none; stroke-width: 3px;");
+    }
+  function generateGuid() { // this generates a unique ID
+    var result, i, j;
+    result = '';
+    for(j=0; j<32; j++) {
+      if( j == 8 || j == 12 || j == 16 || j == 20)
+        result = result + '-';
+      i = Math.floor(Math.random()*16).toString(16).toUpperCase();
+      result = result + i;
+    }
+  return result;
+}
+    function addSignature(svg) {
+      svg.append("text")
+        .attr("x", 370)
+        .attr("y", 580)
+        .attr("font-family", "monospace")
+        .text("Arjan Zuidhof, painting ID " + generateGuid());
+
+    }
+
     var svg = d3.select("#svgcontainer")
       .append("svg")
       .attr("width", width)
       .attr("height", height);
     n = numberOfLines();
+    addBorder();
     while (n-- > 0) {
       grabXY();
       sw = strokeWidth();
-      console.log("n ", n, "s", sw,  "x1 ", x1, "x2 ", x2, "y1 ", y1, "y2 ", y2);
+      //console.log("n ", n, "s", sw,  "x1 ", x1, "x2 ", x2, "y1 ", y1, "y2 ", y2);
       svg.append("line")
         .style("stroke", monColor())
         .attr("x1", x1)
@@ -86,6 +122,7 @@ Mondriaanlike painting on demand.
         .attr("y2", y2)
         .style("stroke-width", sw);
     }
+    addSignature(svg);
   </script>
 
 </body>
