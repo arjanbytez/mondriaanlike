@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <script src="../d3.min.js"></script>
+
+</head>
+<title>Don't press d</title>
+
+<body>
+Mondriaanlike painting on demand.
+
+  <div id="svgcontainer"></div>
+  <script language="javascript">
+
+    width = 900;
+    height = 600;
+
+    function numberOfLines() {
+      return Math.floor(Math.random() * 61) + 19;
+    }
+
+    function strokeWidth() {
+      return Math.floor(Math.random() * 21) + 25;
+    }
+
+    function zeroOrOne() {
+      return Math.round(Math.random());
+    }
+
+    //return one of Mondriaan colors: blue, red, yello, black
+    function monColor() {
+      switch (Math.floor(Math.random() * 5) + 1) {
+        case 1: // blue
+          return "rgb(0,0,255)";
+        case 2, 3: // black twice as likely
+          return "rgb(0,0,0)";
+        case 4: // red
+          return "rgb(255,0,0)";
+        case 5: // yellow
+          return "rgb(255,255,0)";
+      }
+    }
+
+    // x, y values must not touch edges
+    function harmonizePainting(side) {
+      if (side = "x") {
+        if (x1 < 40) {x1 = 50; x2=50;}
+        if (x2 > 860) {x1 = 850; x2 = 850;}
+      }
+      if (side = "y") {
+        if (y1 < 40) {y1 = 50; y2 = 50;}
+        if (y2 > 560) {y1 = 550; y2 = 550;}
+      }
+    }
+    function grabXY() {
+      if (zeroOrOne() == 0) {
+        x1 = Math.random() * width;
+        x2 = x1 + Math.random() *400;
+        y1 = Math.random() * height;
+        y2 = y1;
+        harmonizePainting("y");
+      } else {
+        y1 = Math.random() * height;
+        y2 = y1 + Math.random() * 400;
+        x1 = Math.random() * width;
+        x2 = x1;
+        harmonizePainting("x");
+      }
+    }
+    var svg = d3.select("#svgcontainer")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+    n = numberOfLines();
+    while (n-- > 0) {
+      grabXY();
+      sw = strokeWidth();
+      console.log("n ", n, "s", sw,  "x1 ", x1, "x2 ", x2, "y1 ", y1, "y2 ", y2);
+      svg.append("line")
+        .style("stroke", monColor())
+        .attr("x1", x1)
+        .attr("y1", y1)
+        .attr("x2", x2)
+        .attr("y2", y2)
+        .style("stroke-width", sw);
+    }
+  </script>
+
+</body>
+
+</html>
